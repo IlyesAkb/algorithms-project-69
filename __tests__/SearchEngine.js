@@ -41,14 +41,6 @@ describe('Testing SearchEngine class', () => {
     expect(searchEngine.search('pint!').includes(expectedValue)).toBeTruthy();
   });
 
-  // it('should return documents sorted by relevance', () => {
-  //   const searchResult = searchEngine.search('shoot');
-  //
-  //   expect(searchResult[0].id).toBe('doc2');
-  //   expect(searchResult[1].id).toBe('doc3');
-  //   expect(searchResult[2].id).toBe('doc1');
-  // });
-
 });
 
 
