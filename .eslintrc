@@ -1,0 +1,29 @@
+{
+  "parser": "@babel/eslint-parser",
+  "plugins": ["jest", "prettier"],
+  "extends": [
+    "airbnb-base",
+    "prettier"
+  ],
+  "overrides": [
+    {
+      "files": ["__test__/**"],
+      "plugins": ["jest", "prettier"],
+      "extends": ["prettier"],
+      "rules": {
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error",
+        "jest/prefer-to-have-length": "warn",
+        "jest/valid-expect": "error"
+      }
+    }
+  ],
+  "env": {
+    "jest/globals": true
+  },
+  "rules": {
+    "no-console": 0,
+    "semi": "error"
+  }
+}
