@@ -6,14 +6,18 @@ const docs = [
   { id: 'doc3', text: "I'm your shooter." }
 ];
 
-
+const relevance = {
+  doc1: 3,
+  doc2: 1,
+  doc3: 2
+};
 
 describe('Testing SearchEngine class', () => {
 
   let searchEngine;
 
   beforeEach(() => {
-    searchEngine = new SearchEngine(docs);
+    searchEngine = new SearchEngine(docs, relevance);
   });
 
   afterEach(() => {
@@ -35,6 +39,14 @@ describe('Testing SearchEngine class', () => {
 
     expect(searchEngine.search('pint').includes(expectedValue)).toBeTruthy();
     expect(searchEngine.search('pint!').includes(expectedValue)).toBeTruthy();
+  });
+
+  it('should return documents sorted by relevance', () => {
+    const searchResult = searchEngine.search('shoot');
+
+    expect(searchResult[0].id).toBe('doc2');
+    expect(searchResult[1].id).toBe('doc3');
+    expect(searchResult[2].id).toBe('doc1');
   });
 
 });
