@@ -6,9 +6,21 @@ const docs = [
   { id: 'doc3', text: "I'm your shooter." }
 ];
 
+
+
 describe('Testing SearchEngine class', () => {
+
+  let searchEngine;
+
+  beforeEach(() => {
+    searchEngine = new SearchEngine(docs);
+  });
+
+  afterEach(() => {
+    searchEngine = null;
+  });
+
   it('should return element includes string', () => {
-    const searchEngine = new SearchEngine(docs);
     const expectedValue = docs[0];
     const unexpectedValue = docs[2];
 
@@ -18,4 +30,13 @@ describe('Testing SearchEngine class', () => {
     expect(searchResult.includes(unexpectedValue)).toBeFalsy();
   });
 
+  it('should search docs find regardless of punctuation', () => {
+    const expectedValue = docs[0];
+
+    expect(searchEngine.search('pint').includes(expectedValue)).toBeTruthy();
+    expect(searchEngine.search('pint!').includes(expectedValue)).toBeTruthy();
+  });
+
 });
+
+
