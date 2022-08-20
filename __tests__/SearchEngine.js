@@ -1,4 +1,5 @@
 import SearchEngine from '../src/SearchEngine';
+import Relevance from '../src/Relevance';
 
 const docs = [
   { id: 'doc1', text: "I can't shoot straight unless I've had a pint!" },
@@ -6,18 +7,12 @@ const docs = [
   { id: 'doc3', text: "I'm your shooter." }
 ];
 
-const relevance = {
-  doc1: 3,
-  doc2: 1,
-  doc3: 2
-};
-
 describe('Testing SearchEngine class', () => {
 
   let searchEngine;
 
   beforeEach(() => {
-    searchEngine = new SearchEngine(docs, relevance);
+    searchEngine = new SearchEngine(docs, new Relevance());
   });
 
   afterEach(() => {
@@ -29,6 +24,7 @@ describe('Testing SearchEngine class', () => {
     const unexpectedValue = docs[2];
 
     const searchResult = searchEngine.search('straight');
+    searchEngine.search('straight hello, world!  test');
 
     expect(searchResult.includes(expectedValue)).toBeTruthy();
     expect(searchResult.includes(unexpectedValue)).toBeFalsy();
@@ -39,6 +35,28 @@ describe('Testing SearchEngine class', () => {
 
     expect(searchEngine.search('pint').includes(expectedValue)).toBeTruthy();
     expect(searchEngine.search('pint!').includes(expectedValue)).toBeTruthy();
+  });
+
+  it('should sort documents by goals count', () => {
+    let result = [docs[1], docs[0], docs[2]];
+
+    searchEngine.search('thing');
+    searchEngine.search('thing');
+    searchEngine.search('thing');
+    searchEngine.search('thing');
+
+    expect(searchEngine.search('shoot that thing')).toEqual(result);
+
+    searchEngine.search('your');
+    searchEngine.search('your');
+    searchEngine.search('your');
+    searchEngine.search('your');
+    searchEngine.search('your');
+    searchEngine.search('your');
+
+    result = [docs[1], docs[2], docs[0]];
+
+    expect(searchEngine.search('shoot that thing')).toEqual(result);
   });
 
 });

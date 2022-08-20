@@ -36,17 +36,4 @@ describe('testing relevance class', () => {
 
     expect(relevance.metric).toEqual(expectedValue);
   });
-
-  it('should sort documents by relevance', () => {
-    relevance.actualizeRelevance([docs[1]]);
-    relevance.actualizeRelevance([docs[1]]);
-    relevance.actualizeRelevance([docs[1]]);
-    relevance.actualizeRelevance([docs[1], docs[2]]);
-    relevance.actualizeRelevance([docs[1], docs[2]]);
-    relevance.actualizeRelevance([docs[1], docs[2]]);
-
-    const sortResult = [docs[1], docs[2], docs[0]];
-
-    expect(relevance.sortByRelevance(docs)).toEqual(sortResult);
-  });
 });
