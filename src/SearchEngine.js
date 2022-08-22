@@ -4,13 +4,15 @@ function getSearchStringWords(str) {
 }
 
 export default class SearchEngine {
-  docs = [];
+  docs = {};
+
+  index = {};
 
   #relevance;
 
   constructor(docs, relevance) {
-    this.docs = docs;
     this.#relevance = relevance;
+    this.#prepareDocuments(docs);
   }
 
   #sortResult = (docs, goals) => docs.sort((a, b) => {
@@ -30,24 +32,28 @@ export default class SearchEngine {
 
     const words = getSearchStringWords(str);
 
+    const docs = this.#getDocsByIndexWords(words);
+
     const result = [];
 
-    for (let i = 0; i < this.docs.length; i += 1) {
-      const doc = this.docs[i];
+    for (let i = 0; i < docs.length; i += 1) {
+      const doc = docs[i];
 
       let isAppropriate = false;
 
       for (let j = 0; j < words.length; j += 1) {
         const word = words[j];
+        const regex = new RegExp(word, 'g');
+        const matches = doc.text.match(regex);
 
-        if (doc.text.match(word)) {
+        if (matches) {
 
           if (!isAppropriate) isAppropriate = true;
 
           const goalsCount = goals[doc.id];
 
-          if (!goalsCount) goals[doc.id] = 1;
-          else goals[doc.id] += 1;
+          if (!goalsCount) goals[doc.id] = matches.length;
+          else goals[doc.id] += matches.length;
         }
       }
 
@@ -57,5 +63,57 @@ export default class SearchEngine {
     this.#relevance.actualizeRelevance(result);
 
     return this.#sortResult(result, goals);
+  };
+
+  #prepareDocuments = (docs) => {
+    const indexWords = new Set();
+    const sanitizedDocs = [];
+
+    for (let i = 0; i < docs.length; i += 1) {
+      const doc = docs[i];
+
+      this.docs[doc.id] = doc;
+
+      const words = getSearchStringWords(doc.text);
+
+      sanitizedDocs.push({ id: doc.id, text: words});
+
+      for (let j = 0; j < words.length; j += 1) {
+        const word = words[j];
+        indexWords.add(word.toLowerCase());
+      }
+    }
+
+    indexWords.forEach(word => {
+      for (let i = 0; i < sanitizedDocs.length; i += 1) {
+        const doc = docs[i];
+
+        if (doc.text.match(word)) {
+
+          if (!this.index[word]) this.index[word] = [doc.id];
+          else this.index[word].push(doc.id);
+        }
+      }
+    });
+  };
+
+  #getDocsByIndexWords = (indexWords) => {
+    const uniqueIds = new Set();
+    const result = [];
+
+    for (let i = 0; i < indexWords.length; i += 1) {
+      const word = indexWords[i];
+      const docIds = this.index[word] ?? [];
+
+      for (let j = 0; j < docIds.length; j += 1) {
+        uniqueIds.add(docIds[j]);
+      }
+    }
+
+    uniqueIds.forEach(id => {
+      result.push(this.docs[id]);
+    });
+
+    return result;
   };
 }

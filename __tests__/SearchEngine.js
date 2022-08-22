@@ -26,15 +26,15 @@ describe('Testing SearchEngine class', () => {
     const searchResult = searchEngine.search('straight');
     searchEngine.search('straight hello, world!  test');
 
-    expect(searchResult.includes(expectedValue)).toBeTruthy();
-    expect(searchResult.includes(unexpectedValue)).toBeFalsy();
+    expect(searchResult.find(doc => doc.id === expectedValue.id)).not.toBeUndefined();
+    expect(searchResult.find(doc => doc.id === unexpectedValue.id)).toBeUndefined();
   });
 
   it('should search docs find regardless of punctuation', () => {
     const expectedValue = docs[0];
 
-    expect(searchEngine.search('pint').includes(expectedValue)).toBeTruthy();
-    expect(searchEngine.search('pint!').includes(expectedValue)).toBeTruthy();
+    expect(searchEngine.search('pint').find(doc => doc.id === expectedValue.id)).not.toBeUndefined();
+    expect(searchEngine.search('pint!').find(doc => doc.id === expectedValue.id)).not.toBeUndefined();
   });
 
   it('should sort documents by goals count', () => {
